@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: unless-stopped
+    networks:
+      - springmysql-net
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=restsbmstestdb
+      - MYSQL_PASSWORD=root
+
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+  app:
+    image: spring-boot-docker
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/restsbmstestdb?useSSL=false
+    networks:
+      - springmysql-net
+    depends_on:
+      - mysqldb
+networks:
+  springmysql-net:
